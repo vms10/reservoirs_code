@@ -61,8 +61,8 @@ def prune_graph(graph, target="io", depth=0, to_keep=[], copy=True, verbose=0,
     while rounds < depth or depth == 0:
         rounds += 1
         remove, nremoved = [], []
-        for strategy, degree_iter in [(root, graph.in_degree_iter),
-                                      (leaf, graph.out_degree_iter)]:
+        for strategy, degree_iter in [(root, graph.in_degree),
+                                      (leaf, graph.out_degree)]:
             if strategy:
                 remove += [n for n, d in degree_iter()
                            if n not in to_keep

@@ -2,11 +2,14 @@
 """Tools to simulate reservoir dynamics."""
 
 import warnings
-
 import numpy as np
 from scipy.integrate import odeint 
 
-
+def get_spectral_radius(W):
+    """
+    Return the spectral radius (largest absolute eigenvalue) of the matrix W.
+    """
+    return np.amax(np.absolute(np.linalg.eigvals(W)))
 
 def simulate_reservoir_dynamics(weights, input_weights, input_der, sample_len,
                                 init_state=None):
@@ -35,8 +38,8 @@ def simulate_reservoir_dynamics(weights, input_weights, input_der, sample_len,
         a node to compute its state. It defaults to the hiperbolic tangent.
     """
     nnodes = weights.shape[0]
-    k=0.05
-    d=0.05
+    k=0.05 # protein production
+    d=0.05 # protein degradation
     
     def sigmoid(x):
         return 0.5*((x-0.5)/np.sqrt((x-0.5)**2+0.1)+1)
@@ -62,7 +65,7 @@ def simulate_reservoir_dynamics(weights, input_weights, input_der, sample_len,
     
     t = np.linspace(0,sample_len,sample_len)
 
-    x = odeint(dyn, x0, t, args=(input_der))
+    x = odeint(dyn, x0, t, args=(input_der,))
     
     #np.savetxt('output.csv', x)
     return x

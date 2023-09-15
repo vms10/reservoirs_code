@@ -35,7 +35,6 @@ class LinearRegression(object):
             self.train(train_x, train_y, finish_training=finish_training)
 
     def train(self, x, y, finish_training=False):
-
         if x.shape[0] != y.shape[0]:
             raise ValueError("X and Y do not describe the same number of "
                              "points ({} vs {})".format(x.shape, y.shape))
@@ -62,8 +61,6 @@ class LinearRegression(object):
         self._xTy += (np.dot(x.T,y))
         self._tlen += x.shape[0]
 
-
-
         if finish_training:
             self.finish_training()
 
@@ -75,9 +72,15 @@ class LinearRegression(object):
         inv_xTx = invfun(self._xTx)
         self.beta = np.dot(inv_xTx, self._xTy)
 
-
-
     def __call__(self, x):
+        if self.beta is None:
+            self.finish_training()
+        if self.use_bias:
+            x = _add_constant(x)
+        return np.dot(x, self.beta)
+
+
+"""     def __call__(self, x):
 
         if x.ndim == 1:
             x = x.reshape(-1, 1)
@@ -120,7 +123,7 @@ class LinearRegression(object):
                 output[out][i] = r.y
 
         return (output)
-
+ """
 
 
 class RidgeRegression(LinearRegression):
@@ -128,7 +131,7 @@ class RidgeRegression(LinearRegression):
                  use_bias=True, use_pinv=True, finish_training=False):
 
         self.ridge_param = ridge_param
-        self.ridge_param = 0
+        #self.ridge_param = 0
 
         super(RidgeRegression, self).__init__(
             train_x=train_x, train_y=train_y, use_bias=use_bias,

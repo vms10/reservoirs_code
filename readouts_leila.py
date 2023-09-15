@@ -4,7 +4,7 @@ import numpy as np
 from scipy.integrate import ode 
 
 def sigmoid(x):
-    return (((x-0.5)/(np.sqrt(((x-0.5)**2)+0.1)))+1)/2
+    return 0.5*((x-0.5)/np.sqrt((x-0.5)**2+0.1)+1)
 
 
 def _add_constant(x):
@@ -35,7 +35,6 @@ class LinearRegression(object):
             self.train(train_x, train_y, finish_training=finish_training)
 
     def train(self, x, y, finish_training=False):
-
         if x.shape[0] != y.shape[0]:
             raise ValueError("X and Y do not describe the same number of "
                              "points ({} vs {})".format(x.shape, y.shape))
@@ -62,8 +61,6 @@ class LinearRegression(object):
         self._xTy += (np.dot(x.T,y))
         self._tlen += x.shape[0]
 
-
-
         if finish_training:
             self.finish_training()
 
@@ -74,7 +71,6 @@ class LinearRegression(object):
         invfun = np.linalg.pinv if self.use_pinv else np.linalg.inv
         inv_xTx = invfun(self._xTx)
         self.beta = np.dot(inv_xTx, self._xTy)
-
 
 
     def __call__(self, x):
@@ -128,7 +124,7 @@ class RidgeRegression(LinearRegression):
                  use_bias=True, use_pinv=True, finish_training=False):
 
         self.ridge_param = ridge_param
-        self.ridge_param = 0
+        #self.ridge_param = 0
 
         super(RidgeRegression, self).__init__(
             train_x=train_x, train_y=train_y, use_bias=use_bias,
@@ -141,5 +137,3 @@ class RidgeRegression(LinearRegression):
         invfun = np.linalg.pinv if self.use_pinv else np.linalg.inv
         inv_xTx = invfun(self._xTx + self.ridge_param*np.eye(*self._xTx.shape))
         self.beta = (np.dot(inv_xTx,self._xTy))
-
-    

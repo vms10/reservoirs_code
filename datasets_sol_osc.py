@@ -38,40 +38,42 @@ def ga3(n_samples=100, sample_len=1000):
 
         kd = 0.05 # protein defgradation
 
-        rand = np.random.randint(0,3)
+        rand = np.random.randint(0,4)
 
         if rand == 0:
             a = np.random.uniform(1*((1/float(sample_len))),0.8*((1/float(sample_len)))) # input growing linear
             k_A = 0.05 # output desired gene A
             k_B = 0 # output desired gene B
             k_C = 0 # output desired gene C
-            x0 = [0,0,0,0] # Input is 1 at t=0, hace que el input tenga ordenada al origen = 1
         elif rand == 1:
             a = np.random.uniform(-0.1*((1/float(sample_len))),0.1*((1/float(sample_len)))) # input stable linear
             k_A = 0
             k_B = 0.05
             k_C = 0
-            x0 = [0.5,0,0,0] # Input is 1 at t=0, hace que el input tenga ordenada al origen = 1
-        else:
+        elif rand == 2:
             a = np.random.uniform(-0.8*((1/float(sample_len))),-1*((1/float(sample_len)))) # input decreasing linear
             k_A = 0
             k_B = 0
             k_C = 0.05
-            x0 = [1.0,0,0,0] # Input is 1 at t=0, hace que el input tenga ordenada al origen = 1
+        else:
+            a = np.random.uniform(0.8,1) # input oscilatorio
+            k_A = 0
+            k_B = 0
+            k_C = 0
 
         inputs_derivative.append(a)
 
         def gen_act(x,t):
 
             z, A, B, C = x 
-            dzdt = a # input
+            dzdt = (rand==3)*a*0.01*np.cos(0.01*t) + (rand!=3)*a  # input
             dAdt = (k_A)-(kd*A) # gen A output
             dBdt = (k_B)-(kd*B) # gen B output
             dCdt = (k_C)-(kd*C) # gen C output
 
             return(dzdt,dAdt,dBdt,dCdt)
 
-        
+        x0 = [1,0,0,0] # Input is 1 at t=0, hace que el input tenga ordenada al origen = 1
 
         t = np.linspace(0,sample_len,num=1000)
 
@@ -132,28 +134,32 @@ def gaosc(n_samples=100, sample_len=1000):
 
         kd = 0.05 # protein defgradation
 
-        rand = np.random.randint(0,2)
+        rand = np.random.randint(0,4)
 
         if rand == 0:
-            a = 1/200 # input growing linear
+            a = np.random.uniform(1*((1/float(sample_len))),0.8*((1/float(sample_len)))) # input growing linear
             k_D = 0.0 # output desired gene D
-            x0 = [0,0]
+        elif rand == 1:
+            a = np.random.uniform(-0.1*((1/float(sample_len))),0.1*((1/float(sample_len)))) # input stable linear
+            k_D = 0.0
+        elif rand == 2:
+            a = np.random.uniform(-0.8*((1/float(sample_len))),-1*((1/float(sample_len)))) # input decreasing linear
+            k_D = 0.0
         else:
-            a = -1/200 # input oscilatorio
-            k_D = 0.00
-            x0 = [1.0,0]
+            a = np.random.uniform(0.8,1) # input oscilatorio
+            k_D = 0.05
 
         inputs_derivative.append(a)
 
         def gen_act(x,t):
 
             z, D = x 
-            dzdt = a # input
+            dzdt = (rand==3)*a*0.01*np.cos(0.01*t) + (rand!=3)*a # input
             dDdt = (k_D)-(kd*D) # gen D output
 
             return(dzdt,dDdt)
 
-       
+        x0 = [1,0] # Input is 1 at t=0, hace que el input tenga ordenada al origen = 1
 
         t = np.linspace(0,sample_len,num=1000)
 
